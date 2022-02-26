@@ -121,4 +121,20 @@ public class MusicInfo {
     public void setProgress(Long progress) {
         this.progress = progress;
     }
+
+    @Override
+    public String toString() {
+        return "MusicInfo{" +
+                "appName='" + appName + '\'' +
+                ", pkgName='" + pkgName + '\'' +
+                ", title='" + title + '\'' +
+                ", musicState=" + musicState +
+                ", album=" + album +
+                ", albumUrl='" + albumUrl + '\'' +
+                ", singer='" + singer + '\'' +
+                ", albumTitle='" + albumTitle + '\'' +
+                ", duration=" + duration +
+                ", progress=" + progress +
+                '}';
+    }
 }

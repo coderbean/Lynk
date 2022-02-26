@@ -30,6 +30,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Toast;
+
+import com.alibaba.fastjson.JSON;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
         setContentView(R.layout.activity_main);
         initView();
         initData();
-//        进度拿不到的，这个也没有意义了
+
 //        final Handler handler = new Handler();
 //        final MainActivity controlClick = this;
 //        Runnable runnable = new Runnable() {
@@ -77,21 +80,19 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
     @Override
     protected void onStart() {
         super.onStart();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         checkNotificationPermission();
         registerListener();
         loadMusicControlAdapter();
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
-        unRegisterListener();
-        mHandler.removeCallbacksAndMessages(null);
     }
 
     @Override
@@ -103,6 +104,13 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
     public void onActiveSessionsChanged(List<MediaController> controllers) {
 //        progress = 0L;
         loadMusicControlAdapter();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unRegisterListener();
+        mHandler.removeCallbacksAndMessages(null);
     }
 
     @Override
@@ -298,6 +306,9 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
                         MediaControllerCompat controllerCompat = new MediaControllerCompat(this, MediaSessionCompat.Token.fromToken(controller.getSessionToken()));
                         MusicInfo itemMusicInfo = new MusicInfo();
                         String pkgName = controllerCompat.getPackageName();
+                        if (!"com.apple.android.music".equals(pkgName)) {
+                            continue;
+                        }
                         ApplicationInfo applicationInfo = getPackageManager().getApplicationInfo(pkgName, 0);
                         itemMusicInfo.setAppName(applicationInfo.loadLabel(getPackageManager()).toString());
                         itemMusicInfo.setPkgName(pkgName);
@@ -334,6 +345,23 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
                         }
                         musicInfos.add(itemMusicInfo);
                     }
+
+                    if (musicInfos.size() > 0) {
+                        MusicInfo musicInfo = musicInfos.get(0);
+                        Intent intent = new Intent();
+                        intent.setAction("com.hyphp.playkeytool.service");
+                        intent.putExtra("method", "dashboard");
+
+                        intent.putExtra("getTrackName", musicInfo.getTitle());
+                        intent.putExtra("getAlbumName", musicInfo.getSinger());
+                        intent.putExtra("getArtistName", musicInfo.getAlbumTitle());
+                        intent.putExtra("getDuration", musicInfo.getDuration());
+                        intent.putExtra("getArtwork", musicInfo.getAlbumUrl());
+                        Toast.makeText(this, musicInfo.toString(), Toast.LENGTH_LONG).show();
+                        sendBroadcast(intent);
+                        System.out.println("广播发送完毕");
+                    }
+
                     mRvMusicBrowser.setAdapter(new ControlAdapter(this, musicInfos, this));
                 }
             } catch (Exception e) {
