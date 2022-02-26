@@ -1,6 +1,6 @@
 package cn.edu.fjnu.musicdemo;
 
-import android.app.Instrumentation;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -10,10 +10,9 @@ import android.content.pm.ApplicationInfo;
 import android.media.AudioManager;
 import android.media.session.MediaController;
 import android.media.session.MediaSessionManager;
-import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.LocalBroadcastManager;
@@ -23,7 +22,6 @@ import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -32,13 +30,11 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
-
 import java.util.ArrayList;
 import java.util.List;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-public class MainActivity extends AppCompatActivity implements MediaSessionManager.OnActiveSessionsChangedListener, OnControlClick {
+public class MainActivity extends Activity implements MediaSessionManager.OnActiveSessionsChangedListener, OnControlClick {
     final String TAG = "MainActivity";
     private RecyclerView mRvMusicBrowser;
     private NotifyReceiver mNotifyReceiver = new NotifyReceiver();
@@ -50,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        getSupportActionBar().hide();
+//        getSupportActionBar().hide();
         super.onCreate(savedInstanceState);
 //        getSupportActionBar().hide();
 //        getActionBar().hide();
@@ -86,6 +82,8 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
         checkNotificationPermission();
         registerListener();
         loadMusicControlAdapter();
+        moveTaskToBack(false);
+        Toast.makeText(this, "媒体广播转换启动成功", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -119,17 +117,17 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
     @Override
     public void onClick(View view) {
         Log.i(TAG, "onClick");
-        switch (view.getId()) {
-            case R.id.iv_last_music:
-                lastMusic((MusicInfo) view.getTag());
-                break;
-            case R.id.iv_next_music:
-                nexMusic((MusicInfo) view.getTag());
-                break;
-            case R.id.iv_play_pause:
-                playOrPause((MusicInfo) view.getTag());
-                break;
-        }
+//        switch (view.getId()) {
+//            case R.id.iv_last_music:
+//                lastMusic((MusicInfo) view.getTag());
+//                break;
+//            case R.id.iv_next_music:
+//                nexMusic((MusicInfo) view.getTag());
+//                break;
+//            case R.id.iv_play_pause:
+//                playOrPause((MusicInfo) view.getTag());
+//                break;
+//        }
     }
 
     private void nexMusic(MusicInfo musicInfo) {
@@ -361,9 +359,10 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
                         intent.putExtra("getDuration", musicInfo.getDuration().toString());
                         intent.putExtra("getArtwork", musicInfo.getAlbumUrl());
                         sendBroadcast(intent);
+//                        Toast.makeText(getApplicationContext(),"发送广播成功",Toast.LENGTH_SHORT).show();
                     }
 
-                    mRvMusicBrowser.setAdapter(new ControlAdapter(this, musicInfos, this));
+//                    mRvMusicBrowser.setAdapter(new ControlAdapter(this, musicInfos, this));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
