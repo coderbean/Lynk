@@ -50,6 +50,28 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
         setContentView(R.layout.activity_main);
         initView();
         initData();
+
+        final Handler handler = new Handler();
+        final MainActivity controlClick = this;
+        Runnable runnable = new Runnable() {
+
+            @Override
+            public void run() {
+                try{
+//                    loadMusicControlAdapter(true);
+                }
+                catch (Exception e) {
+                    System.out.println(e);
+                }
+                finally{
+                    //also call the same runnable to call it at regular interval
+                    handler.postDelayed(this, 1000);
+                }
+            }
+        };
+
+//runnable must be execute once
+        handler.post(runnable);
     }
 
 
@@ -281,17 +303,29 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
                         itemMusicInfo.setPkgName(pkgName);
                         PlaybackStateCompat playbackStateCompat = controllerCompat.getPlaybackState();
                         itemMusicInfo.setMusicState(playbackStateCompat != null && playbackStateCompat.getState() == PlaybackStateCompat.STATE_PLAYING);
-                        itemMusicInfo.setTitle("");
                         MediaMetadataCompat mediaMetadataCompat = controllerCompat.getMetadata();
+
+                        // android.media.metadata.DURATION 毫秒值
+                        itemMusicInfo.setDuration(controllerCompat.getMetadata().getLong("android.media.metadata.DURATION"));
+
+
                         if (mediaMetadataCompat != null) {
                             MediaDescriptionCompat descriptionCompat = mediaMetadataCompat.getDescription();
                             if (descriptionCompat != null) {
                                 CharSequence musicTitle = descriptionCompat.getTitle();
-                                Uri iconUri = descriptionCompat.getIconUri();
-                                Log.i(TAG, "album url:" + iconUri.toString());
-                                itemMusicInfo.setAlbum(iconUri);
+                                // 封面
+                                itemMusicInfo.setAlbum(descriptionCompat.getIconBitmap());
+                                itemMusicInfo.setAlbumUrl(descriptionCompat.getIconUri().toString());
+                                // 专辑名称
+                                if (!TextUtils.isEmpty(descriptionCompat.getDescription()))
+                                    itemMusicInfo.setAlbumTitle(descriptionCompat.getDescription().toString());
+                                // 歌曲名称
                                 if (!TextUtils.isEmpty(musicTitle))
                                     itemMusicInfo.setTitle(musicTitle.toString());
+
+                                // 歌手
+                                if (!TextUtils.isEmpty(descriptionCompat.getSubtitle()))
+                                    itemMusicInfo.setSinger(descriptionCompat.getSubtitle().toString());
                             }
                         }
                         musicInfos.add(itemMusicInfo);

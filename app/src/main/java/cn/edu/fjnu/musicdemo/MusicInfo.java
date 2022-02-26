@@ -1,13 +1,41 @@
 package cn.edu.fjnu.musicdemo;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 
 public class MusicInfo {
     private String appName;
     private String pkgName;
-    private String title;
+    /**
+     * 歌曲名称
+     */
+    private String title = "";
     private boolean musicState;
-    private Uri album;
+    /**
+     * 封面
+     */
+    private Bitmap album;
+
+    /**
+     * 封面url
+     */
+    private String albumUrl;
+
+    /**
+     * 歌手
+     */
+    private String singer = "";
+
+    /**
+     * 专辑名称
+     */
+    private String albumTitle = "";
+
+    /**
+     * 歌曲时常
+     */
+    private Long duration = 180000L;
+
 
     public String getAppName() {
         return appName;
@@ -41,11 +69,43 @@ public class MusicInfo {
         this.pkgName = pkgName;
     }
 
-    public Uri getAlbum() {
+    public Bitmap getAlbum() {
         return album;
     }
 
-    public void setAlbum(Uri album) {
+    public void setAlbum(Bitmap album) {
         this.album = album;
+    }
+
+    public String getSinger() {
+        return singer;
+    }
+
+    public void setSinger(String singer) {
+        this.singer = singer;
+    }
+
+    public String getAlbumUrl() {
+        return albumUrl;
+    }
+
+    public void setAlbumUrl(String albumUrl) {
+        this.albumUrl = albumUrl;
+    }
+
+    public String getAlbumTitle() {
+        return albumTitle;
+    }
+
+    public void setAlbumTitle(String albumTitle) {
+        this.albumTitle = albumTitle;
+    }
+
+    public Long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Long duration) {
+        this.duration = duration;
     }
 }
