@@ -50,7 +50,18 @@ public class MainActivity extends Activity implements MediaSessionManager.OnActi
         setContentView(R.layout.activity_main);
         initView();
         initData();
+        onePiexlInit();
         initScheduler();
+    }
+
+    /**
+     * 注册广播
+     */
+    private void onePiexlInit() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_SCREEN_ON);
+        intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
+        registerReceiver(new OnePixelReceiver(), intentFilter);
     }
 
     /**
