@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -50,8 +51,13 @@ public class ControlAdapter extends RecyclerView.Adapter implements View.OnClick
         singer.setText(itemMusicInfo.getSinger());
         ProgressBar progressBar = viewHolder.itemView.findViewById(R.id.progressBar);
         progressBar.setMax((int) (itemMusicInfo.getDuration() / 1000L));
+        progressBar.setProgress((int) (itemMusicInfo.getProgress() / 1000L));
+
         TextView duration = viewHolder.itemView.findViewById(R.id.duration);
         duration.setText(Objects.toString(itemMusicInfo.getDuration()));
+
+        TextView progress = viewHolder.itemView.findViewById(R.id.progress);
+        progress.setText(Objects.toString(itemMusicInfo.getProgress()));
 
         ImageView imgPlayPause = viewHolder.itemView.findViewById(R.id.iv_play_pause);
         imgPlayPause.setImageResource(itemMusicInfo.isMusicState() ? R.mipmap.pause : R.mipmap.play);

@@ -32,9 +32,14 @@ public class MusicInfo {
     private String albumTitle = "";
 
     /**
-     * 歌曲时常
+     * 歌曲时长
      */
     private Long duration = 180000L;
+
+    /**
+     * 歌曲进度
+     */
+    private Long progress = 0L;
 
 
     public String getAppName() {
@@ -107,5 +112,13 @@ public class MusicInfo {
 
     public void setDuration(Long duration) {
         this.duration = duration;
+    }
+
+    public Long getProgress() {
+        return progress;
+    }
+
+    public void setProgress(Long progress) {
+        this.progress = progress;
     }
 }

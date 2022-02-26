@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
     private Handler mHandler = new Handler();
     private MediaSessionManager mediaSessionManager;
     private ComponentName mNotifyReceiveService;
+//    private long progress = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,28 +51,26 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
         setContentView(R.layout.activity_main);
         initView();
         initData();
-
-        final Handler handler = new Handler();
-        final MainActivity controlClick = this;
-        Runnable runnable = new Runnable() {
-
-            @Override
-            public void run() {
-                try{
-//                    loadMusicControlAdapter(true);
-                }
-                catch (Exception e) {
-                    System.out.println(e);
-                }
-                finally{
-                    //also call the same runnable to call it at regular interval
-                    handler.postDelayed(this, 1000);
-                }
-            }
-        };
-
-//runnable must be execute once
-        handler.post(runnable);
+//        进度拿不到的，这个也没有意义了
+//        final Handler handler = new Handler();
+//        final MainActivity controlClick = this;
+//        Runnable runnable = new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                try {
+//                    loadMusicControlAdapter();
+//                } catch (Exception e) {
+//                    System.out.println(e);
+//                } finally {
+//                    //also call the same runnable to call it at regular interval
+//                    handler.postDelayed(this, 1000);
+//                }
+//            }
+//        };
+//
+////runnable must be execute once
+//        handler.post(runnable);
     }
 
 
@@ -102,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
 
     @Override
     public void onActiveSessionsChanged(List<MediaController> controllers) {
+//        progress = 0L;
         loadMusicControlAdapter();
     }
 
@@ -304,9 +304,13 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
                         PlaybackStateCompat playbackStateCompat = controllerCompat.getPlaybackState();
                         itemMusicInfo.setMusicState(playbackStateCompat != null && playbackStateCompat.getState() == PlaybackStateCompat.STATE_PLAYING);
                         MediaMetadataCompat mediaMetadataCompat = controllerCompat.getMetadata();
+//                        if (itemMusicInfo.isMusicState()) {
+//                            progress += 1000L;
+//                        }
 
                         // android.media.metadata.DURATION 毫秒值
                         itemMusicInfo.setDuration(controllerCompat.getMetadata().getLong("android.media.metadata.DURATION"));
+//                        itemMusicInfo.setProgress(progress);
 
 
                         if (mediaMetadataCompat != null) {
@@ -431,6 +435,7 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
         public void onMetadataChanged(MediaMetadataCompat metadata) {
             //播放内容发生改变
             if (metadata != null) {
+//                progress = 0L;
                 loadMusicControlAdapter();
             }
         }
