@@ -39,14 +39,7 @@ public class ControlAdapter extends RecyclerView.Adapter implements View.OnClick
         textAppName.setText(itemMusicInfo.getAppName());
         Log.i("urlxxx:", itemMusicInfo.getAlbum().toString());
         ImageView album = viewHolder.itemView.findViewById(R.id.albums);
-        Picasso.with(mContext) //
-                .load(itemMusicInfo.getAlbum()) //加载地址
-                .placeholder(R.mipmap.ic_launcher)
-                //占位图
-                .error(R.mipmap.ic_launcher) //加载失败的图
-                .fit() //充满
-                .tag(mContext) //标记
-                .into(album);//加载到的ImageView
+        Picasso.get().load(itemMusicInfo.getAlbum().toString()).into(album);
         TextView textMusicTitle = viewHolder.itemView.findViewById(R.id.tv_music_title);
         textMusicTitle.setText(itemMusicInfo.getTitle());
         ImageView imgPlayPause = viewHolder.itemView.findViewById(R.id.iv_play_pause);

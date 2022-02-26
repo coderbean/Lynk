@@ -20,7 +20,7 @@
     <ImageView
         android:id="@+id/albums"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="360dp"
         android:gravity="center_horizontal"
         tools:srcCompat="@tools:sample/avatars" />
 
@@ -62,4 +62,5 @@
             android:src="@mipmap/next_music"
             android:layout_marginStart="40dp"/>
     </LinearLayout>
+
 </LinearLayout>
