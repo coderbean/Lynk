@@ -50,7 +50,10 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getSupportActionBar().hide();
         super.onCreate(savedInstanceState);
+//        getSupportActionBar().hide();
+//        getActionBar().hide();
         setContentView(R.layout.activity_main);
         initView();
         initData();
@@ -355,11 +358,9 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
                         intent.putExtra("getTrackName", musicInfo.getTitle());
                         intent.putExtra("getAlbumName", musicInfo.getSinger());
                         intent.putExtra("getArtistName", musicInfo.getAlbumTitle());
-                        intent.putExtra("getDuration", musicInfo.getDuration());
+                        intent.putExtra("getDuration", musicInfo.getDuration().toString());
                         intent.putExtra("getArtwork", musicInfo.getAlbumUrl());
-                        Toast.makeText(this, musicInfo.toString(), Toast.LENGTH_LONG).show();
                         sendBroadcast(intent);
-                        System.out.println("广播发送完毕");
                     }
 
                     mRvMusicBrowser.setAdapter(new ControlAdapter(this, musicInfos, this));
