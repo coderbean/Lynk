@@ -50,10 +50,13 @@ public class ControlAdapter extends RecyclerView.Adapter implements View.OnClick
 //        progressBar.setProgress((int) (itemMusicInfo.getProgress() / 1000L));
 //
 //        TextView duration = viewHolder.itemView.findViewById(R.id.duration);
-//        duration.setText(Objects.toString(itemMusicInfo.getDuration()));
+// //        duration.setText(Objects.toString(itemMusicInfo.getDuration()));
+//        duration.setText(TimeUtil.millisToMines(itemMusicInfo.getDuration()));
+
 //
 //        TextView progress = viewHolder.itemView.findViewById(R.id.progress);
-//        progress.setText(Objects.toString(itemMusicInfo.getProgress()));
+// //        progress.setText(Objects.toString(itemMusicInfo.getProgress()));
+//        progress.setText(TimeUtil.millisToMines(itemMusicInfo.getProgress()));
 //
 //        ImageView imgPlayPause = viewHolder.itemView.findViewById(R.id.iv_play_pause);
 //        imgPlayPause.setImageResource(itemMusicInfo.isMusicState() ? R.mipmap.pause : R.mipmap.play);

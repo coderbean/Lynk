@@ -21,7 +21,6 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -42,37 +41,43 @@ public class MainActivity extends Activity implements MediaSessionManager.OnActi
     private Handler mHandler = new Handler();
     private MediaSessionManager mediaSessionManager;
     private ComponentName mNotifyReceiveService;
-//    private long progress = 0;
+    private long progress = 0L;
+    private int playStat = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//        getSupportActionBar().hide();
         super.onCreate(savedInstanceState);
-//        getSupportActionBar().hide();
-//        getActionBar().hide();
         setContentView(R.layout.activity_main);
         initView();
         initData();
+        initScheduler();
+    }
 
-//        final Handler handler = new Handler();
-//        final MainActivity controlClick = this;
-//        Runnable runnable = new Runnable() {
-//
-//            @Override
-//            public void run() {
-//                try {
-//                    loadMusicControlAdapter();
-//                } catch (Exception e) {
-//                    System.out.println(e);
-//                } finally {
-//                    //also call the same runnable to call it at regular interval
-//                    handler.postDelayed(this, 1000);
-//                }
-//            }
-//        };
-//
-////runnable must be execute once
-//        handler.post(runnable);
+    /**
+     * 初始化定时任务
+     */
+    private void initScheduler() {
+        final Handler handler = new Handler();
+        final MainActivity controlClick = this;
+        Runnable runnable = new Runnable() {
+
+            @Override
+            public void run() {
+                long interval = 200L;
+                try {
+                    if (playStat == PlaybackStateCompat.STATE_PLAYING) {
+                        progress += interval;
+                        loadMusicControlAdapter(true);
+                    }
+                } catch (Exception e) {
+                    System.out.println(e);
+                } finally {
+                    //also call the same runnable to call it at regular interval
+                    handler.postDelayed(this, interval);
+                }
+            }
+        };
+        handler.post(runnable);
     }
 
 
@@ -298,6 +303,13 @@ public class MainActivity extends Activity implements MediaSessionManager.OnActi
      * 加载音乐控制页面
      */
     private void loadMusicControlAdapter() {
+        loadMusicControlAdapter(false);
+    }
+
+    /**
+     * 加载音乐控制页面
+     */
+    private void loadMusicControlAdapter(boolean onlyProgress) {
         if (Build.VERSION.SDK_INT >= 21) {
             try {
                 List<MediaController> mediaControllers = mediaSessionManager.getActiveSessions(mNotifyReceiveService);
@@ -323,7 +335,7 @@ public class MainActivity extends Activity implements MediaSessionManager.OnActi
                         // android.media.metadata.DURATION 毫秒值
                         itemMusicInfo.setDuration(controllerCompat.getMetadata().getLong("android.media.metadata.DURATION"));
 //                        itemMusicInfo.setProgress(progress);
-
+                        itemMusicInfo.setProgress(progress);
 
                         if (mediaMetadataCompat != null) {
                             MediaDescriptionCompat descriptionCompat = mediaMetadataCompat.getDescription();
@@ -351,15 +363,18 @@ public class MainActivity extends Activity implements MediaSessionManager.OnActi
                         MusicInfo musicInfo = musicInfos.get(0);
                         Intent intent = new Intent();
                         intent.setAction("com.hyphp.playkeytool.service");
-                        intent.putExtra("method", "dashboard");
-
-                        intent.putExtra("getTrackName", musicInfo.getTitle());
-                        intent.putExtra("getAlbumName", musicInfo.getSinger());
-                        intent.putExtra("getArtistName", musicInfo.getAlbumTitle());
-                        intent.putExtra("getDuration", musicInfo.getDuration().toString());
-                        intent.putExtra("getArtwork", musicInfo.getAlbumUrl());
+                        if (onlyProgress) {
+                            intent.putExtra("method", "updatepos");
+                            intent.putExtra("pos", Long.toString(musicInfo.getProgress()));
+                        } else {
+                            intent.putExtra("method", "dashboard");
+                            intent.putExtra("getTrackName", musicInfo.getTitle());
+                            intent.putExtra("getAlbumName", musicInfo.getSinger());
+                            intent.putExtra("getArtistName", musicInfo.getAlbumTitle());
+                            intent.putExtra("getDuration", musicInfo.getDuration().toString());
+                            intent.putExtra("getArtwork", musicInfo.getAlbumUrl());
+                        }
                         sendBroadcast(intent);
-//                        Toast.makeText(getApplicationContext(),"发送广播成功",Toast.LENGTH_SHORT).show();
                     }
 
 //                    mRvMusicBrowser.setAdapter(new ControlAdapter(this, musicInfos, this));
@@ -456,6 +471,33 @@ public class MainActivity extends Activity implements MediaSessionManager.OnActi
         @Override
         public void onPlaybackStateChanged(PlaybackStateCompat state) {
             //播放状态发生改变
+            // 状态列表 https://www.apiref.com/android-zh/android/support/v4/media/session/PlaybackStateCompat.html#STATE_NONE
+            progress = state.getPosition();
+            playStat = state.getState();
+            switch (playStat) {
+                case PlaybackStateCompat.STATE_BUFFERING:
+                case PlaybackStateCompat.STATE_CONNECTING:
+                case PlaybackStateCompat.STATE_NONE:
+                case PlaybackStateCompat.STATE_STOPPED:
+                case PlaybackStateCompat.STATE_ERROR: {
+                    progress = 0L;
+                    break;
+                }
+                case PlaybackStateCompat.STATE_PAUSED:
+                    break;
+                case PlaybackStateCompat.STATE_FAST_FORWARDING:
+                    break;
+                case PlaybackStateCompat.STATE_REWINDING:
+                    break;
+                case PlaybackStateCompat.STATE_SKIPPING_TO_NEXT:
+                    break;
+                case PlaybackStateCompat.STATE_SKIPPING_TO_PREVIOUS:
+                    break;
+                case PlaybackStateCompat.STATE_SKIPPING_TO_QUEUE_ITEM:
+                    break;
+                default:
+                    break;
+            }
             loadMusicControlAdapter();
         }
 
