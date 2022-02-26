@@ -77,7 +77,7 @@ public class MainActivity extends Activity implements MediaSessionManager.OnActi
                 long interval = 200L;
                 try {
                     if (playStat == PlaybackStateCompat.STATE_PLAYING) {
-                        progress += interval;
+                        progress += (interval + 30);
                         loadMusicControlAdapter(true);
                     }
                 } catch (Exception e) {
