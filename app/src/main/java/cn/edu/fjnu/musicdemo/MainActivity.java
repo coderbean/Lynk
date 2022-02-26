@@ -387,7 +387,8 @@ public class MainActivity extends Activity implements MediaSessionManager.OnActi
                         }
                         sendBroadcast(intent);
                     }
-
+//                    Toast.makeText(this, TimeUtil.millisToMines(progress), Toast.LENGTH_SHORT).show();
+                    Log.d("broadcast", TimeUtil.millisToMines(progress));
 //                    mRvMusicBrowser.setAdapter(new ControlAdapter(this, musicInfos, this));
                 }
             } catch (Exception e) {
