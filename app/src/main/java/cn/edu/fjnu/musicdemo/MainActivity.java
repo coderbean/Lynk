@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
                     System.out.println(e);
                 } finally {
                     //also call the same runnable to call it at regular interval
-                    handler.postDelayed(this, 100L);
+                    handler.postDelayed(this, 500L);
                 }
             }
         };
