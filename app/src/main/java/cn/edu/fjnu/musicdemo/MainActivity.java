@@ -365,8 +365,8 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
                             currSongHash = newSongHash;
                             intent.putExtra("method", "dashboard");
                             intent.putExtra("getTrackName", musicInfo.getTitle());
-                            intent.putExtra("getAlbumName", musicInfo.getSinger());
-                            intent.putExtra("getArtistName", musicInfo.getAlbumTitle());
+                            intent.putExtra("getAlbumName", musicInfo.getAlbumTitle());
+                            intent.putExtra("getArtistName", musicInfo.getSinger());
                             intent.putExtra("getDuration", musicInfo.getDuration().toString());
                             intent.putExtra("getArtwork", musicInfo.getAlbumUrl());
                         }
