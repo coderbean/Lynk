@@ -1,6 +1,5 @@
 package cn.edu.fjnu.musicdemo;
 
-import android.app.Instrumentation;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -10,10 +9,9 @@ import android.content.pm.ApplicationInfo;
 import android.media.AudioManager;
 import android.media.session.MediaController;
 import android.media.session.MediaSessionManager;
-import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.LocalBroadcastManager;
@@ -23,14 +21,12 @@ import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 
@@ -325,8 +321,8 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
                         MediaMetadataCompat mediaMetadataCompat = controllerCompat.getMetadata();
                         // android.media.metadata.DURATION 毫秒值
                         itemMusicInfo.setDuration(controllerCompat.getMetadata().getLong("android.media.metadata.DURATION"));
-//                        itemMusicInfo.setProgress(progress);
                         itemMusicInfo.setProgress(controller.getPlaybackState().getPosition());
+                        playStat = controller.getPlaybackState().getState();
 
 
                         if (mediaMetadataCompat != null) {
