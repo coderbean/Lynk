@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
         initData();
 
         final Handler handler = new Handler();
-        final MainActivity controlClick = this;
         Runnable runnable = new Runnable() {
 
             @Override
