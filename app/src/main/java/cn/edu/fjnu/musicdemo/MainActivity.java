@@ -27,6 +27,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 
@@ -36,6 +37,7 @@ import java.util.Objects;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class MainActivity extends AppCompatActivity implements MediaSessionManager.OnActiveSessionsChangedListener, OnControlClick {
+    public static final String APPLE_MUSIC_PKG_NAME = "com.apple.android.music";
     final String TAG = "MainActivity";
     private RecyclerView mRvMusicBrowser;
     private NotifyReceiver mNotifyReceiver = new NotifyReceiver();
@@ -75,8 +77,19 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
             }
         };
 
-//runnable must be execute once
         handler.post(runnable);
+
+        // 推出前台
+        moveTaskToBack(false);
+
+        // 启动 apple music
+        Intent intent = getApplicationContext().getPackageManager().getLaunchIntentForPackage(APPLE_MUSIC_PKG_NAME);
+        if (intent != null) {
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getApplicationContext().startActivity(intent);
+        }
+
+        Toast.makeText(this, "媒体广播转换启动成功", Toast.LENGTH_SHORT).show();
     }
 
 
@@ -310,7 +323,7 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
                         MediaControllerCompat controllerCompat = new MediaControllerCompat(this, MediaSessionCompat.Token.fromToken(controller.getSessionToken()));
                         MusicInfo itemMusicInfo = new MusicInfo();
                         String pkgName = controllerCompat.getPackageName();
-                        if (!"com.apple.android.music".equals(pkgName)) {
+                        if (!APPLE_MUSIC_PKG_NAME.equals(pkgName)) {
                             continue;
                         }
                         ApplicationInfo applicationInfo = getPackageManager().getApplicationInfo(pkgName, 0);
