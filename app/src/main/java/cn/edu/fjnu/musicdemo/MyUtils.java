@@ -1,8 +1,9 @@
 package cn.edu.fjnu.musicdemo;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 
-public class TimeUtil {
+public class MyUtils {
     @SuppressLint("DefaultLocale")
     public static String millisToMines(Long lg) {
         if (lg == null) {

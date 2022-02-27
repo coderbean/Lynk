@@ -3,6 +3,11 @@ package cn.edu.fjnu.musicdemo;
 import android.graphics.Bitmap;
 import android.net.Uri;
 
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 public class MusicInfo {
     private String appName;
     private String pkgName;
@@ -40,6 +45,23 @@ public class MusicInfo {
      * 歌曲进度
      */
     private Long progress = 0L;
+
+    public String hashSong() {
+        try {
+            // 创建一个MessageDigest实例:
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            // 反复调用update输入数据:
+            md.update(this.title.getBytes("UTF-8"));
+            md.update(this.singer.getBytes("UTF-8"));
+            md.update(this.albumTitle.getBytes("UTF-8"));
+            byte[] result = md.digest(); // 16 bytes: 68e109f0f40ca72a15e05cc22786f8e6
+            return (new BigInteger(1, result).toString(16));
+        } catch (Throwable e) {
+            e.printStackTrace();
+            // 降级返回当前时间，保证刷新
+            return Long.toString(System.currentTimeMillis());
+        }
+    }
 
 
     public String getAppName() {
@@ -121,6 +143,8 @@ public class MusicInfo {
     public void setProgress(Long progress) {
         this.progress = progress;
     }
+
+
 
     @Override
     public String toString() {

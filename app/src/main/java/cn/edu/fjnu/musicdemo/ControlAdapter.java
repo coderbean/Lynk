@@ -3,7 +3,6 @@ package cn.edu.fjnu.musicdemo;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +10,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
-import com.squareup.picasso.Picasso;
-
 import java.util.List;
-import java.util.Objects;
 
 public class ControlAdapter extends RecyclerView.Adapter implements View.OnClickListener {
 
@@ -39,7 +34,6 @@ public class ControlAdapter extends RecyclerView.Adapter implements View.OnClick
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
         MusicInfo itemMusicInfo = musicInfos.get(position);
-        System.out.println(JSON.toJSONString(itemMusicInfo));
         TextView textAppName = viewHolder.itemView.findViewById(R.id.tv_app_name);
         textAppName.setText(itemMusicInfo.getAppName());
         ImageView album = viewHolder.itemView.findViewById(R.id.albums);
@@ -56,11 +50,11 @@ public class ControlAdapter extends RecyclerView.Adapter implements View.OnClick
 
         TextView duration = viewHolder.itemView.findViewById(R.id.duration);
 //        duration.setText(Objects.toString(itemMusicInfo.getDuration()));
-        duration.setText(TimeUtil.millisToMines(itemMusicInfo.getDuration()));
+        duration.setText(MyUtils.millisToMines(itemMusicInfo.getDuration()));
 
         TextView progress = viewHolder.itemView.findViewById(R.id.progress);
 //        progress.setText(Objects.toString(itemMusicInfo.getProgress()));
-        progress.setText(TimeUtil.millisToMines(itemMusicInfo.getProgress()));
+        progress.setText(MyUtils.millisToMines(itemMusicInfo.getProgress()));
 
         ImageView imgPlayPause = viewHolder.itemView.findViewById(R.id.iv_play_pause);
         imgPlayPause.setImageResource(itemMusicInfo.isMusicState() ? R.mipmap.pause : R.mipmap.play);
