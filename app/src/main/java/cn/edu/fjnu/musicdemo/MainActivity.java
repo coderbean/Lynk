@@ -81,14 +81,6 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
 
         // 推出前台
         moveTaskToBack(false);
-
-        // 启动 apple music
-        Intent intent = getApplicationContext().getPackageManager().getLaunchIntentForPackage(APPLE_MUSIC_PKG_NAME);
-        if (intent != null) {
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            getApplicationContext().startActivity(intent);
-        }
-
         Toast.makeText(this, "媒体广播转换启动成功", Toast.LENGTH_SHORT).show();
     }
 
