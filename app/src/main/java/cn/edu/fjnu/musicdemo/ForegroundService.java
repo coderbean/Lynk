@@ -44,6 +44,7 @@ public class ForegroundService extends Service {
 
     @Override
     public void onDestroy() {
+        timer.cancel();
         super.onDestroy();
     }
 }
