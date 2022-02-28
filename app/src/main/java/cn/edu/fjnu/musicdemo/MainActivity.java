@@ -9,9 +9,11 @@ import android.content.pm.ApplicationInfo;
 import android.media.AudioManager;
 import android.media.session.MediaController;
 import android.media.session.MediaSessionManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.LocalBroadcastManager;
@@ -27,6 +29,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 //import com.alibaba.fastjson.JSON;
@@ -48,8 +51,12 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
     private String currSongHash = Long.toString(System.currentTimeMillis());
     private int playStat = 0;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // 推出前台
+        moveTaskToBack(true);
+//        openAppleMusic();
         getSupportActionBar().hide();
         super.onCreate(savedInstanceState);
 //        getSupportActionBar().hide();
@@ -77,10 +84,20 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
         };
 
         handler.post(runnable);
+        if (!isIgnoringBatteryOptimizations()) {
+            requestIgnoreBatteryOptimizations();
+        }
 
-        // 推出前台
-        moveTaskToBack(true);
         Toast.makeText(this, "媒体广播转换启动成功", Toast.LENGTH_SHORT).show();
+    }
+
+    private void openAppleMusic() {
+        // 启动 apple music
+        Intent intent = getApplicationContext().getPackageManager().getLaunchIntentForPackage(APPLE_MUSIC_PKG_NAME);
+        if (intent != null) {
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getApplicationContext().startActivity(intent);
+        }
     }
 
 
@@ -95,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
     @Override
     protected void onResume() {
         super.onResume();
+//        openAppleMusic();
     }
 
     @Override
@@ -478,5 +496,26 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
             }
         }
     };
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private boolean isIgnoringBatteryOptimizations() {
+        boolean isIgnoring = false;
+        PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        if (powerManager != null) {
+            isIgnoring = powerManager.isIgnoringBatteryOptimizations(getPackageName());
+        }
+        return isIgnoring;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void requestIgnoreBatteryOptimizations() {
+        try {
+            Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+            intent.setData(Uri.parse("package:" + getPackageName()));
+            startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }
