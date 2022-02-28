@@ -29,7 +29,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
+//import com.alibaba.fastjson.JSON;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
                     System.out.println(e);
                 } finally {
                     //also call the same runnable to call it at regular interval
-                    handler.postDelayed(this, 500L);
+                    handler.postDelayed(this, 800L);
                 }
             }
         };
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
         handler.post(runnable);
 
         // 推出前台
-        moveTaskToBack(false);
+        moveTaskToBack(true);
         Toast.makeText(this, "媒体广播转换启动成功", Toast.LENGTH_SHORT).show();
     }
 
@@ -109,8 +109,6 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
 
     @Override
     public void onActiveSessionsChanged(List<MediaController> controllers) {
-//        progress = 0L;
-        MediaController mediaController = controllers.get(0);
         loadMusicControlAdapter();
     }
 
@@ -370,7 +368,7 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
                             intent.putExtra("getArtwork", musicInfo.getAlbumUrl());
                         }
                         sendBroadcast(intent);
-                        Log.d("broadcast", JSON.toJSONString(intent));
+//                        Log.d("broadcast", JSON.toJSONString(intent));
                     }
 
                     mRvMusicBrowser.setAdapter(new ControlAdapter(this, musicInfos, this));

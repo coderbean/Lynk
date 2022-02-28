@@ -1,12 +1,9 @@
 package cn.edu.fjnu.musicdemo;
 
 import android.graphics.Bitmap;
-import android.net.Uri;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 public class MusicInfo {
     private String appName;

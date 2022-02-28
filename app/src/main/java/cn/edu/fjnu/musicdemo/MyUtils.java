@@ -1,7 +1,6 @@
 package cn.edu.fjnu.musicdemo;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 
 public class MyUtils {
     @SuppressLint("DefaultLocale")
