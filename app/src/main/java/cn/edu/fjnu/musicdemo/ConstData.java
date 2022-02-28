@@ -7,5 +7,6 @@ public class ConstData {
     public interface BroadCastMsg{
         String NOTIFY_POSTED= "notify_posted";
         String NOTIFY_REMOVED = "notify_removed";
+        String NOTIFY_REFRESH = "notify_refresh";
     }
 }

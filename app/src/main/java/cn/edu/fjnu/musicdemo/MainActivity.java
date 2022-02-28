@@ -49,14 +49,13 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
     private MediaSessionManager mediaSessionManager;
     private ComponentName mNotifyReceiveService;
     private String currSongHash = Long.toString(System.currentTimeMillis());
-    private int playStat = 0;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // 推出前台
         moveTaskToBack(true);
-        openAppleMusic();
+//        openAppleMusic();
         getSupportActionBar().hide();
         super.onCreate(savedInstanceState);
 //        getSupportActionBar().hide();
@@ -65,29 +64,33 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
         initView();
         initData();
 
-        final Handler handler = new Handler();
-        Runnable runnable = new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    if (playStat == PlaybackStateCompat.STATE_PLAYING) {
-                        loadMusicControlAdapter();
-                    }
-                } catch (Exception e) {
-                    System.out.println(e);
-                } finally {
-                    //also call the same runnable to call it at regular interval
-                    handler.postDelayed(this, 800L);
-                }
-            }
-        };
-
-        handler.post(runnable);
         if (!isIgnoringBatteryOptimizations()) {
             requestIgnoreBatteryOptimizations();
         }
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getApplicationContext().startForegroundService(new Intent(getApplicationContext(), ForegroundService.class));
+        } else {
+            final Handler handler = new Handler();
+            Runnable runnable = new Runnable() {
+
+                @Override
+                public void run() {
+                    try {
+                        if (((MyApp)getApplication()).getPlayStatus() == PlaybackStateCompat.STATE_PLAYING) {
+                            loadMusicControlAdapter();
+                        }
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    } finally {
+                        //also call the same runnable to call it at regular interval
+                        handler.postDelayed(this, 800L);
+                    }
+                }
+            };
+
+            handler.post(runnable);
+        }
         Toast.makeText(this, "媒体广播转换启动成功", Toast.LENGTH_SHORT).show();
     }
 
@@ -112,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
     @Override
     protected void onResume() {
         super.onResume();
-        openAppleMusic();
+//        openAppleMusic();
     }
 
     @Override
@@ -321,6 +324,7 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
      * 加载音乐控制页面
      */
     private void loadMusicControlAdapter() {
+        Log.d(TAG, "loadMusicControlAdapter()");
         if (Build.VERSION.SDK_INT >= 21) {
             try {
                 List<MediaController> mediaControllers = mediaSessionManager.getActiveSessions(mNotifyReceiveService);
@@ -342,7 +346,7 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
                         // android.media.metadata.DURATION 毫秒值
                         itemMusicInfo.setDuration(controllerCompat.getMetadata().getLong("android.media.metadata.DURATION"));
                         itemMusicInfo.setProgress(controller.getPlaybackState().getPosition());
-                        playStat = controller.getPlaybackState().getState();
+                        ((MyApp)getApplication()).setPlayStatus(controller.getPlaybackState().getState());
 
 
                         if (mediaMetadataCompat != null) {
@@ -407,6 +411,7 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
         IntentFilter notifyFilter = new IntentFilter();
         notifyFilter.addAction(ConstData.BroadCastMsg.NOTIFY_POSTED);
         notifyFilter.addAction(ConstData.BroadCastMsg.NOTIFY_REMOVED);
+        notifyFilter.addAction(ConstData.BroadCastMsg.NOTIFY_REFRESH);
         LocalBroadcastManager.getInstance(this).registerReceiver(mNotifyReceiver, notifyFilter);
         if (Build.VERSION.SDK_INT >= 21) {
             try {
@@ -484,7 +489,7 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
         public void onPlaybackStateChanged(PlaybackStateCompat state) {
             //播放状态发生改变
             // 状态列表 https://www.apiref.com/android-zh/android/support/v4/media/session/PlaybackStateCompat.html#STATE_NONE
-            playStat = state.getState();
+            ((MyApp)getApplication()).setPlayStatus(state.getState());
             loadMusicControlAdapter();
         }
 
