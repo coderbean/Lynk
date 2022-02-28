@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
     protected void onCreate(Bundle savedInstanceState) {
         // 推出前台
         moveTaskToBack(true);
-//        openAppleMusic();
+        openAppleMusic();
         getSupportActionBar().hide();
         super.onCreate(savedInstanceState);
 //        getSupportActionBar().hide();
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
     @Override
     protected void onResume() {
         super.onResume();
-//        openAppleMusic();
+        openAppleMusic();
     }
 
     @Override
