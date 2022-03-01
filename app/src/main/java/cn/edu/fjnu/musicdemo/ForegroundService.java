@@ -53,8 +53,9 @@ public class ForegroundService extends Service implements MediaSessionManager.On
 
     private MusicActionReceiver musicActionReceiver = new MusicActionReceiver();
 
-
     private Timer timer;
+
+    private int songNum = 0;
 
     @Nullable
     @Override
@@ -72,8 +73,12 @@ public class ForegroundService extends Service implements MediaSessionManager.On
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
+                Log.d(TAG, "playStatus=" + Objects.toString(((MyApp) getApplication()).getPlayStatus()) + ", songNum=" + Objects.toString(songNum));
                 if (((MyApp) getApplication()).getPlayStatus() == PlaybackStateCompat.STATE_PLAYING) {
                     loadMusicControlAdapter();
+                    if (songNum < 2) {
+                        loadMusicControlAdapter(true);
+                    }
                 }
             }
         }, 0L, 500L);
@@ -86,6 +91,7 @@ public class ForegroundService extends Service implements MediaSessionManager.On
         }
         startForeground(1, getNotification());
         ((MyApp) getApplication()).setServiceRunning(true);
+        Log.d(TAG, "service start up");
     }
 
     private Notification getNotification() {
@@ -122,10 +128,17 @@ public class ForegroundService extends Service implements MediaSessionManager.On
         mNotifyReceiveService = new ComponentName(this, MusicControlService.class);
     }
 
+
+    private void loadMusicControlAdapter() {
+        loadMusicControlAdapter(false);
+    }
+
     /**
      * 加载音乐控制页面
+     *
+     * @param forceUpdateInfo 是否强制刷新基本信息
      */
-    private void loadMusicControlAdapter() {
+    private void loadMusicControlAdapter(boolean forceUpdateInfo) {
         Log.d(TAG, "loadMusicControlAdapter()-foregroundService");
         if (Build.VERSION.SDK_INT >= 21) {
             try {
@@ -180,19 +193,19 @@ public class ForegroundService extends Service implements MediaSessionManager.On
                         // 表示是同一个歌曲
                         String newSongHash = musicInfo.hashSong();
                         if (Objects.equals(currSongHash, newSongHash)) {
-                            intent.putExtra("method", "updatepos");
-                            intent.putExtra("pos", Long.toString(musicInfo.getProgress()));
+                            fillProgress(musicInfo, intent);
                         } else {
                             currSongHash = newSongHash;
-                            intent.putExtra("method", "dashboard");
-                            intent.putExtra("getTrackName", musicInfo.getTitle());
-                            intent.putExtra("getAlbumName", musicInfo.getAlbumTitle());
-                            intent.putExtra("getArtistName", musicInfo.getSinger());
-                            intent.putExtra("getDuration", musicInfo.getDuration().toString());
-                            intent.putExtra("getArtwork", musicInfo.getAlbumUrl());
+                            songNum++;
+                            fillDashboard(musicInfo, intent);
                         }
                         sendBroadcast(intent);
                         Log.d("broadcast", MyUtils.printBroadCast(intent));
+                        if (forceUpdateInfo) {
+                            Intent forceUpdateInfoIntent = new Intent();
+                            fillDashboard(musicInfo, forceUpdateInfoIntent);
+                            Log.d("broadcast:force", MyUtils.printBroadCast(forceUpdateInfoIntent));
+                        }
                     }
 //                    mRvMusicBrowser.setAdapter(new ControlAdapter(this, musicInfos, this));
                 }
@@ -202,6 +215,20 @@ public class ForegroundService extends Service implements MediaSessionManager.On
 
         }
 
+    }
+
+    private void fillProgress(MusicInfo musicInfo, Intent intent) {
+        intent.putExtra("method", "updatepos");
+        intent.putExtra("pos", Long.toString(musicInfo.getProgress()));
+    }
+
+    private void fillDashboard(MusicInfo musicInfo, Intent intent) {
+        intent.putExtra("method", "dashboard");
+        intent.putExtra("getTrackName", musicInfo.getTitle());
+        intent.putExtra("getAlbumName", musicInfo.getAlbumTitle());
+        intent.putExtra("getArtistName", musicInfo.getSinger());
+        intent.putExtra("getDuration", musicInfo.getDuration().toString());
+        intent.putExtra("getArtwork", musicInfo.getAlbumUrl());
     }
 
     @Override
