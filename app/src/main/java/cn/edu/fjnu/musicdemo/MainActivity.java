@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
             requestIgnoreBatteryOptimizations();
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !((MyApp)getApplication()).isServiceRunning()) {
             getApplicationContext().startForegroundService(new Intent(getApplicationContext(), ForegroundService.class));
         } else {
             final Handler handler = new Handler();
@@ -371,27 +371,27 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
                         musicInfos.add(itemMusicInfo);
                     }
 
-                    if (musicInfos.size() > 0) {
-                        MusicInfo musicInfo = musicInfos.get(0);
-                        Intent intent = new Intent();
-                        intent.setAction("com.hyphp.playkeytool.service");
-                        // 表示是同一个歌曲
-                        String newSongHash = musicInfo.hashSong();
-                        if (Objects.equals(currSongHash, newSongHash)) {
-                            intent.putExtra("method", "updatepos");
-                            intent.putExtra("pos", Long.toString(musicInfo.getProgress()));
-                        } else {
-                            currSongHash = newSongHash;
-                            intent.putExtra("method", "dashboard");
-                            intent.putExtra("getTrackName", musicInfo.getTitle());
-                            intent.putExtra("getAlbumName", musicInfo.getAlbumTitle());
-                            intent.putExtra("getArtistName", musicInfo.getSinger());
-                            intent.putExtra("getDuration", musicInfo.getDuration().toString());
-                            intent.putExtra("getArtwork", musicInfo.getAlbumUrl());
-                        }
-                        sendBroadcast(intent);
-//                        Log.d("broadcast", JSON.toJSONString(intent));
-                    }
+//                    if (musicInfos.size() > 0) {
+//                        MusicInfo musicInfo = musicInfos.get(0);
+//                        Intent intent = new Intent();
+//                        intent.setAction("com.hyphp.playkeytool.service");
+//                        // 表示是同一个歌曲
+//                        String newSongHash = musicInfo.hashSong();
+//                        if (Objects.equals(currSongHash, newSongHash)) {
+//                            intent.putExtra("method", "updatepos");
+//                            intent.putExtra("pos", Long.toString(musicInfo.getProgress()));
+//                        } else {
+//                            currSongHash = newSongHash;
+//                            intent.putExtra("method", "dashboard");
+//                            intent.putExtra("getTrackName", musicInfo.getTitle());
+//                            intent.putExtra("getAlbumName", musicInfo.getAlbumTitle());
+//                            intent.putExtra("getArtistName", musicInfo.getSinger());
+//                            intent.putExtra("getDuration", musicInfo.getDuration().toString());
+//                            intent.putExtra("getArtwork", musicInfo.getAlbumUrl());
+//                        }
+//                        sendBroadcast(intent);
+////                        Log.d("broadcast", JSON.toJSONString(intent));
+//                    }
 
                     mRvMusicBrowser.setAdapter(new ControlAdapter(this, musicInfos, this));
                 }

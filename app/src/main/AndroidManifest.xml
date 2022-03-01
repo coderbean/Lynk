@@ -14,6 +14,17 @@
         android:supportsRtl="true"
         android:installLocation="internalOnly"
         android:theme="@style/AppTheme">
+        <receiver android:name=".BootBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
         <activity android:name="cn.edu.fjnu.musicdemo.MainActivity"
             android:screenOrientation="fullSensor"
             android:excludeFromRecents="true">
@@ -35,18 +46,6 @@
             android:name=".ForegroundService"
             android:enabled="true"
             android:exported="true" />
-        <receiver android:name=".BootBroadcastReceiver"
-            android:enabled="true"
-            android:exported="true"
-            android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
-            >
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </receiver>
-
     </application>
 
 </manifest>

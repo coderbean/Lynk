@@ -2,10 +2,12 @@ package cn.edu.fjnu.musicdemo;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.v4.media.session.PlaybackStateCompat;
 
 public class MyApp extends Application {
     private static Context mContext;
     private int playStatus;
+    private boolean serviceRunning = false;
 
     @Override
     public void onCreate() {
@@ -23,5 +25,13 @@ public class MyApp extends Application {
 
     public void setPlayStatus(int playStatus) {
         this.playStatus = playStatus;
+    }
+
+    public boolean isServiceRunning() {
+        return serviceRunning;
+    }
+
+    public void setServiceRunning(boolean serviceRunning) {
+        this.serviceRunning = serviceRunning;
     }
 }
