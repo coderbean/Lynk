@@ -36,7 +36,7 @@ public class ForegroundService extends Service implements MediaSessionManager.On
     public static final String APPLE_MUSIC_PKG_NAME = "com.apple.android.music";
 
     private NotificationManager notificationManager;
-    private static final String NOTIFICATION_ID = "channedId";
+    private static final String NOTIFICATION_ID = "广播转换通知后台服务";
     private static final String NOTIFICATION_NAME = "channedId";
 
     private static final String TAG = "ForegroundService";
