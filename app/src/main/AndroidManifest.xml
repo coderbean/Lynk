@@ -26,8 +26,7 @@
             </intent-filter>
         </receiver>
         <activity android:name="cn.edu.fjnu.musicdemo.MainActivity"
-            android:screenOrientation="fullSensor"
-            android:excludeFromRecents="true">
+            android:screenOrientation="fullSensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW"/>
