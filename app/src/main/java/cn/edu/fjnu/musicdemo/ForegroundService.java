@@ -67,27 +67,25 @@ public class ForegroundService extends Service implements MediaSessionManager.On
         super.onCreate();
         initData();
         registerListener();
-        registerListener();
         loadMusicControlAdapter();
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if (((MyApp)getApplication()).getPlayStatus() == PlaybackStateCompat.STATE_PLAYING) {
-                    Log.d("ForegroundService", "send local msg");
+                if (((MyApp) getApplication()).getPlayStatus() == PlaybackStateCompat.STATE_PLAYING) {
                     loadMusicControlAdapter();
                 }
             }
-        }, 0L, 800L);
+        }, 0L, 500L);
 
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         //创建NotificationChannel
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(NOTIFICATION_ID, NOTIFICATION_NAME, NotificationManager.IMPORTANCE_HIGH);
             notificationManager.createNotificationChannel(channel);
         }
-        startForeground(1,getNotification());
-        ((MyApp)getApplication()).setServiceRunning(true);
+        startForeground(1, getNotification());
+        ((MyApp) getApplication()).setServiceRunning(true);
     }
 
     private Notification getNotification() {
@@ -96,7 +94,7 @@ public class ForegroundService extends Service implements MediaSessionManager.On
                 .setContentTitle("媒体广播转换服务")
                 .setContentText("正在运行...");
         //设置Notification的ChannelID,否则不能正常显示
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             builder.setChannelId(NOTIFICATION_ID);
         }
         Notification notification = builder.build();
@@ -112,15 +110,18 @@ public class ForegroundService extends Service implements MediaSessionManager.On
     public void onDestroy() {
         super.onDestroy();
         timer.cancel();
-        ((MyApp)getApplication()).setServiceRunning(false);
+        ((MyApp) getApplication()).setServiceRunning(false);
+        unRegisterListener();
         mHandler.removeCallbacksAndMessages(null);
         stopForeground(true);
     }
+
     private void initData() {
         if (Build.VERSION.SDK_INT >= 21)
             mediaSessionManager = (MediaSessionManager) getSystemService(Context.MEDIA_SESSION_SERVICE);
         mNotifyReceiveService = new ComponentName(this, MusicControlService.class);
     }
+
     /**
      * 加载音乐控制页面
      */
@@ -146,7 +147,7 @@ public class ForegroundService extends Service implements MediaSessionManager.On
                         MediaMetadataCompat mediaMetadataCompat = controllerCompat.getMetadata();
                         // android.media.metadata.DURATION 毫秒值
                         itemMusicInfo.setProgress(controller.getPlaybackState().getPosition());
-                        ((MyApp)getApplication()).setPlayStatus(controller.getPlaybackState().getState());
+                        ((MyApp) getApplication()).setPlayStatus(controller.getPlaybackState().getState());
 
 
                         if (mediaMetadataCompat != null) {
@@ -276,7 +277,7 @@ public class ForegroundService extends Service implements MediaSessionManager.On
         public void onPlaybackStateChanged(PlaybackStateCompat state) {
             //播放状态发生改变
             // 状态列表 https://www.apiref.com/android-zh/android/support/v4/media/session/PlaybackStateCompat.html#STATE_NONE
-            ((MyApp)getApplication()).setPlayStatus(state.getState());
+            ((MyApp) getApplication()).setPlayStatus(state.getState());
             loadMusicControlAdapter();
         }
 
@@ -297,6 +298,7 @@ public class ForegroundService extends Service implements MediaSessionManager.On
             processNotify();
         }
     }
+
     /**
      * 处理通知
      */

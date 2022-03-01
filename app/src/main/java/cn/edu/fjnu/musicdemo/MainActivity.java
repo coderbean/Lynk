@@ -90,8 +90,7 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
         };
 
         handler.post(runnable);
-
-        Toast.makeText(this, "媒体广播转换启动成功", Toast.LENGTH_SHORT).show();
+        loadMusicControlAdapter(true);
     }
 
     private void openAppleMusic() {
@@ -320,10 +319,15 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
         }, 500);
     }
 
-    /**
-     * 加载音乐控制页面
-     */
     private void loadMusicControlAdapter() {
+        loadMusicControlAdapter(false);
+    }
+
+
+        /**
+         * 加载音乐控制页面
+         */
+    private void loadMusicControlAdapter(boolean sendBroadCast) {
         Log.d(TAG, "loadMusicControlAdapter()");
         if (Build.VERSION.SDK_INT >= 21) {
             try {
@@ -345,11 +349,11 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
                         MediaMetadataCompat mediaMetadataCompat = controllerCompat.getMetadata();
                         // android.media.metadata.DURATION 毫秒值
                         itemMusicInfo.setDuration(controllerCompat.getMetadata().getLong("android.media.metadata.DURATION"));
-                        itemMusicInfo.setProgress(controller.getPlaybackState().getPosition());
                         ((MyApp) getApplication()).setPlayStatus(controller.getPlaybackState().getState());
 
 
                         if (mediaMetadataCompat != null) {
+                            itemMusicInfo.setDuration(mediaMetadataCompat.getLong("android.media.metadata.DURATION"));
                             MediaDescriptionCompat descriptionCompat = mediaMetadataCompat.getDescription();
                             if (descriptionCompat != null) {
                                 CharSequence musicTitle = descriptionCompat.getTitle();
@@ -371,27 +375,29 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
                         musicInfos.add(itemMusicInfo);
                     }
 
-//                    if (musicInfos.size() > 0) {
-//                        MusicInfo musicInfo = musicInfos.get(0);
-//                        Intent intent = new Intent();
-//                        intent.setAction("com.hyphp.playkeytool.service");
-//                        // 表示是同一个歌曲
-//                        String newSongHash = musicInfo.hashSong();
-//                        if (Objects.equals(currSongHash, newSongHash)) {
-//                            intent.putExtra("method", "updatepos");
-//                            intent.putExtra("pos", Long.toString(musicInfo.getProgress()));
-//                        } else {
-//                            currSongHash = newSongHash;
-//                            intent.putExtra("method", "dashboard");
-//                            intent.putExtra("getTrackName", musicInfo.getTitle());
-//                            intent.putExtra("getAlbumName", musicInfo.getAlbumTitle());
-//                            intent.putExtra("getArtistName", musicInfo.getSinger());
-//                            intent.putExtra("getDuration", musicInfo.getDuration().toString());
-//                            intent.putExtra("getArtwork", musicInfo.getAlbumUrl());
-//                        }
-//                        sendBroadcast(intent);
-////                        Log.d("broadcast", JSON.toJSONString(intent));
-//                    }
+                    if (sendBroadCast) {
+                        if (musicInfos.size() > 0) {
+                            MusicInfo musicInfo = musicInfos.get(0);
+                            Intent intent = new Intent();
+                            intent.setAction("com.hyphp.playkeytool.service");
+                            // 表示是同一个歌曲
+                            String newSongHash = musicInfo.hashSong();
+                            if (Objects.equals(currSongHash, newSongHash)) {
+                                intent.putExtra("method", "updatepos");
+                                intent.putExtra("pos", Long.toString(musicInfo.getProgress()));
+                            } else {
+                                currSongHash = newSongHash;
+                                intent.putExtra("method", "dashboard");
+                                intent.putExtra("getTrackName", musicInfo.getTitle());
+                                intent.putExtra("getAlbumName", musicInfo.getAlbumTitle());
+                                intent.putExtra("getArtistName", musicInfo.getSinger());
+                                intent.putExtra("getDuration", musicInfo.getDuration().toString());
+                                intent.putExtra("getArtwork", musicInfo.getAlbumUrl());
+                            }
+                            sendBroadcast(intent);
+//                        Log.d("broadcast", JSON.toJSONString(intent));
+                        }
+                    }
 
                     mRvMusicBrowser.setAdapter(new ControlAdapter(this, musicInfos, this));
                 }
