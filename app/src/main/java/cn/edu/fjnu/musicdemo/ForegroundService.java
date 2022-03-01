@@ -145,12 +145,12 @@ public class ForegroundService extends Service implements MediaSessionManager.On
                         itemMusicInfo.setMusicState(playbackStateCompat != null && playbackStateCompat.getState() == PlaybackStateCompat.STATE_PLAYING);
                         MediaMetadataCompat mediaMetadataCompat = controllerCompat.getMetadata();
                         // android.media.metadata.DURATION 毫秒值
-                        itemMusicInfo.setDuration(controllerCompat.getMetadata().getLong("android.media.metadata.DURATION"));
                         itemMusicInfo.setProgress(controller.getPlaybackState().getPosition());
                         ((MyApp)getApplication()).setPlayStatus(controller.getPlaybackState().getState());
 
 
                         if (mediaMetadataCompat != null) {
+                            itemMusicInfo.setDuration(mediaMetadataCompat.getLong("android.media.metadata.DURATION"));
                             MediaDescriptionCompat descriptionCompat = mediaMetadataCompat.getDescription();
                             if (descriptionCompat != null) {
                                 CharSequence musicTitle = descriptionCompat.getTitle();

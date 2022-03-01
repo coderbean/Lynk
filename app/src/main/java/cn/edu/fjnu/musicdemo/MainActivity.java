@@ -68,29 +68,29 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
             requestIgnoreBatteryOptimizations();
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !((MyApp)getApplication()).isServiceRunning()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !((MyApp) getApplication()).isServiceRunning()) {
             getApplicationContext().startForegroundService(new Intent(getApplicationContext(), ForegroundService.class));
-        } else {
-            final Handler handler = new Handler();
-            Runnable runnable = new Runnable() {
-
-                @Override
-                public void run() {
-                    try {
-                        if (((MyApp)getApplication()).getPlayStatus() == PlaybackStateCompat.STATE_PLAYING) {
-                            loadMusicControlAdapter();
-                        }
-                    } catch (Exception e) {
-                        System.out.println(e);
-                    } finally {
-                        //also call the same runnable to call it at regular interval
-                        handler.postDelayed(this, 800L);
-                    }
-                }
-            };
-
-            handler.post(runnable);
         }
+        final Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    if (((MyApp) getApplication()).getPlayStatus() == PlaybackStateCompat.STATE_PLAYING) {
+                        loadMusicControlAdapter();
+                    }
+                } catch (Exception e) {
+                    System.out.println(e);
+                } finally {
+                    //also call the same runnable to call it at regular interval
+                    handler.postDelayed(this, 800L);
+                }
+            }
+        };
+
+        handler.post(runnable);
+
         Toast.makeText(this, "媒体广播转换启动成功", Toast.LENGTH_SHORT).show();
     }
 
@@ -346,7 +346,7 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
                         // android.media.metadata.DURATION 毫秒值
                         itemMusicInfo.setDuration(controllerCompat.getMetadata().getLong("android.media.metadata.DURATION"));
                         itemMusicInfo.setProgress(controller.getPlaybackState().getPosition());
-                        ((MyApp)getApplication()).setPlayStatus(controller.getPlaybackState().getState());
+                        ((MyApp) getApplication()).setPlayStatus(controller.getPlaybackState().getState());
 
 
                         if (mediaMetadataCompat != null) {
@@ -489,7 +489,7 @@ public class MainActivity extends AppCompatActivity implements MediaSessionManag
         public void onPlaybackStateChanged(PlaybackStateCompat state) {
             //播放状态发生改变
             // 状态列表 https://www.apiref.com/android-zh/android/support/v4/media/session/PlaybackStateCompat.html#STATE_NONE
-            ((MyApp)getApplication()).setPlayStatus(state.getState());
+            ((MyApp) getApplication()).setPlayStatus(state.getState());
             loadMusicControlAdapter();
         }
 
