@@ -114,6 +114,7 @@ public class ForegroundService extends Service implements MediaSessionManager.On
         timer.cancel();
         ((MyApp)getApplication()).setServiceRunning(false);
         mHandler.removeCallbacksAndMessages(null);
+        stopForeground(true);
     }
     private void initData() {
         if (Build.VERSION.SDK_INT >= 21)
