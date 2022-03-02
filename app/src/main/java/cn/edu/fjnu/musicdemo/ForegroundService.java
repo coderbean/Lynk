@@ -205,8 +205,11 @@ public class ForegroundService extends Service implements MediaSessionManager.On
                         sendBroadcast(intent);
                         Log.d("broadcast", MyUtils.printBroadCast(intent));
                         if (forceUpdateInfo) {
+                            // 解决开机后封面不刷新的问题
                             Intent forceUpdateInfoIntent = new Intent();
+                            forceUpdateInfoIntent.setAction("com.hyphp.playkeytool.service");
                             fillDashboard(musicInfo, forceUpdateInfoIntent);
+                            sendBroadcast(forceUpdateInfoIntent);
                             Log.d("broadcast:force", MyUtils.printBroadCast(forceUpdateInfoIntent));
                         }
                     }
