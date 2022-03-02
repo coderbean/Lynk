@@ -55,8 +55,6 @@ public class ForegroundService extends Service implements MediaSessionManager.On
 
     private Timer timer;
 
-    private int songNum = 0;
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -73,12 +71,8 @@ public class ForegroundService extends Service implements MediaSessionManager.On
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                Log.d(TAG, "playStatus=" + Objects.toString(((MyApp) getApplication()).getPlayStatus()) + ", songNum=" + Objects.toString(songNum));
                 if (((MyApp) getApplication()).getPlayStatus() == PlaybackStateCompat.STATE_PLAYING) {
                     loadMusicControlAdapter();
-                    if (songNum < 2) {
-                        loadMusicControlAdapter(true);
-                    }
                 }
             }
         }, 0L, 500L);
@@ -91,6 +85,16 @@ public class ForegroundService extends Service implements MediaSessionManager.On
         }
         startForeground(1, getNotification());
         ((MyApp) getApplication()).setServiceRunning(true);
+
+        // 创建前一分钟的force刷新封面
+        for (int i = 0; i < 10; i++) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    loadMusicControlAdapter(true);
+                }
+            }, 6_000L * i);
+        }
         Log.d(TAG, "service start up");
     }
 
@@ -196,7 +200,6 @@ public class ForegroundService extends Service implements MediaSessionManager.On
                             fillProgress(musicInfo, intent);
                         } else {
                             currSongHash = newSongHash;
-                            songNum++;
                             fillDashboard(musicInfo, intent);
                         }
                         sendBroadcast(intent);
