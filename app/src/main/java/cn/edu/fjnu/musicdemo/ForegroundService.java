@@ -203,6 +203,11 @@ public class ForegroundService extends Service implements MediaSessionManager.On
                             fillDashboard(musicInfo, intent);
                         }
                         sendBroadcast(intent);
+
+                        intent.setAction("cn.edu.fjnu.musicdemo.widget.REFRESH");
+                        intent.setPackage(getApplication().getPackageName());
+                        sendBroadcast(intent);
+
                         Log.d("broadcast", MyUtils.printBroadCast(intent));
                         if (forceUpdateInfo) {
                             // 解决开机后封面不刷新的问题
@@ -210,6 +215,11 @@ public class ForegroundService extends Service implements MediaSessionManager.On
                             forceUpdateInfoIntent.setAction("com.hyphp.playkeytool.service");
                             fillDashboard(musicInfo, forceUpdateInfoIntent);
                             sendBroadcast(forceUpdateInfoIntent);
+
+                            forceUpdateInfoIntent.setAction("cn.edu.fjnu.musicdemo.widget.REFRESH");
+                            forceUpdateInfoIntent.setPackage(getApplication().getPackageName());
+                            sendBroadcast(forceUpdateInfoIntent);
+
                             Log.d("broadcast:force", MyUtils.printBroadCast(forceUpdateInfoIntent));
                         }
                     }
